@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>บริการให้ "หลาน" พาผู้สูงอายุไปหาหมอ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body { 
+      font-family: 'Prompt', sans-serif; 
+      background: #f8fafc; 
+      margin: 0; 
+      padding: 0;
+      font-size: 20px;
+      line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    .container {
+      width: 100vw;
+      min-height: 100vh;
+      background: white;
+      overflow-x: hidden;
+    }
+
+    .header { 
+      background: linear-gradient(135deg, #113a69, #1e5a96); 
+      color: white; 
+      text-align: center; 
+      padding: 30px 20px; 
+      font-size: 28px; 
+      font-weight: 700; 
+      box-shadow: 0 2px 10px rgba(17,58,105,0.2);
+    }
+
+    .form-section {
+      background: white;
+      margin: 25px 20px;
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+    }
+
+    .section-title { 
+      color: #1a202c;
+      margin: 0 0 25px 0; 
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-number {
+      background: #113a69;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 12px;
+      color: #374151;
+      font-weight: 600;
+      font-size: 19px;
+    }
+
+    input, select, textarea {
+      width: 100%; 
+      padding: 20px; 
+      border-radius: 14px; 
+      border: 2px solid #e5e7eb; 
+      font-size: 20px; 
+      font-family: 'Prompt', sans-serif;
+      transition: all 0.3s ease;
+      background: #fafbfc;
+      min-height: 60px;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #113a69;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(17,58,105,0.1);
+    }
+
+    textarea { 
+      resize: vertical; 
+      min-height: 100px; 
+    }
+
+    /* Relation chips - ปรับให้ใช้งานง่ายบนมือถือ */
+    .relation-options { 
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 10px; 
+      margin-top: 10px;
+    }
+
+    .relation-options input[type="radio"] { 
+      display: none; 
+    }
+
+    .relation-options label {
+      padding: 16px 10px; 
+      border: 2px solid #e5e7eb; 
+      border-radius: 12px;
+      color: #4b5563; 
+      cursor: pointer; 
+      font-size: 16px; 
+      font-weight: 600;
+      transition: all 0.3s ease;
+      user-select: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+    }
+
+    .relation-options input[type="radio"]:checked + label { 
+      background: #113a69; 
+      color: white; 
+      border-color: #113a69;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(17,58,105,0.3);
+    }
+
+    .datetime-wrapper { 
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px; 
+      margin-top: 10px;
+    }
+
+    .datetime-field { 
+      position: relative; 
+    }
+
+    .datetime-field input { 
+      padding-left: 60px; 
+      cursor: pointer; 
+    }
+
+    .datetime-field::before {
+      content: attr(data-icon);
+      position: absolute; 
+      left: 20px; 
+      top: 50%;
+      transform: translateY(-50%);
+      color: #113a69; 
+      font-size: 24px;
+      z-index: 1;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      display: block;
+      padding: 20px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 14px;
+      text-align: center;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+      font-size: 18px;
+      min-height: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .file-input-label:hover {
+      border-color: #113a69;
+      background: #f1f5f9;
+    }
+
+    .submit-btn {
+      width: calc(100% - 40px); 
+      background: linear-gradient(135deg, #113a69, #1e5a96); 
+      color: white; 
+      padding: 24px;
+      font-size: 22px; 
+      font-weight: 700; 
+      border: none; 
+      border-radius: 16px; 
+      cursor: pointer; 
+      margin: 40px 20px 30px 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(17,58,105,0.3);
+      position: sticky;
+      bottom: 20px;
+      z-index: 100;
+      min-height: 68px;
+    }
+
+    .submit-btn:hover, .submit-btn:active { 
+      background: linear-gradient(135deg, #0e3058, #1a4d7a);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(17,58,105,0.4);
+    }
+
+    .submit-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .success-message { 
+      text-align: center; 
+      padding: 40px 20px; 
+      display: none; 
+      color: #113a69;
+      background: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .success-message.show {
+      display: flex;
+    }
+
+    .success-icon { 
+      font-size: 80px; 
+      margin-bottom: 20px; 
+      color: #10b981;
+    }
+
+    .success-text {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .order-id {
+      font-size: 18px;
+      color: #113a69;
+      background: #f0f9ff;
+      padding: 20px 25px;
+      border-radius: 16px;
+      margin: 25px 0;
+      font-weight: 600;
+      border: 2px solid #e0f2fe;
+      text-align: center;
+    }
+
+    /* Loading state */
+    .loading {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* Error states */
+    .error {
+      border-color: #ef4444 !important;
+      background: #fef2f2 !important;
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 16px;
+      margin-top: 8px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* Accessibility improvements */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Very small screens */
+    @media screen and (max-width: 360px) {
+      .form-section {
+        margin: 20px 15px;
+        padding: 25px 20px;
+      }
+      
+      .relation-options {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .datetime-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      input, select, textarea {
+        font-size: 20px;
+        padding: 18px;
+      }
+    }
+
+    /* Large touch targets for better usability */
+    @media (pointer: coarse) {
+      input, select, textarea, button, label {
+        min-height: 60px;
+      }
+      
+      .relation-options label {
+        min-height: 52px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">จองบริการรถเข็นนอกสถานที่</div>
+
+    <form id="bookingForm">
+      <input type="hidden" id="orderId" name="orderId">
+
+      <!-- 1. ข้อมูลผู้จอง -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-number">1</span>
+          ข้อมูลผู้จองบริการ
+        </h3>
+        
+        <div class="form-group">
+          <label>ชื่อ-นามสกุลผู้จอง *</label>
+          <input type="text" name="customerName" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+          <div class="error-message">กรุณากรอกชื่อ-นามสกุล</div>
+        </div>
+
+        <div class="form-group">
+          <label>เบอร์โทรติดต่อ *</label>
+          <input type="tel" name="customerPhone" placeholder="0XX-XXX-XXXX" required>
+          <div class="error-message">กรุณากรอกเบอร์โทรติดต่อ</div>
+        </div>
+
+        <div class="form-group">
+          <label>ความสัมพันธ์กับผู้สูงอายุ *</label>
+          <div class="relation-options">
+            <input type="radio" id="self" name="relation" value="ตนเอง" required><label for="self">ตนเอง</label>
+            <input type="radio" id="child" name="relation" value="บุตร"><label for="child">บุตร</label>
+            <input type="radio" id="father" name="relation" value="บิดา"><label for="father">บิดา</label>
+            <input type="radio" id="mother" name="relation" value="มารดา"><label for="mother">มารดา</label>
+            <input type="radio" id="spouse" name="relation" value="คู่สมรส"><label for="spouse">คู่สมรส</label>
+            <input type="radio" id="relative" name="relation" value="ญาติ"><label for="relative">ญาติ</label>
+            <input type="radio" id="friend" name="relation" value="เพื่อน"><label for="friend">เพื่อน</label>
+            <input type="radio" id="other" name="relation" value="อื่นๆ"><label for="other">อื่นๆ</label>
+          </div>
+          <div class="error-message">กรุณาเลือกความสัมพันธ์</div>
+        </div>
+      </div>
+
+      <!-- 2. ข้อมูลผู้สูงอายุ -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-number">2</span>
+          ข้อมูลผู้สูงอายุ/ผู้ป่วย
+        </h3>
+        
+        <div class="form-group">
+          <label>ชื่อ-นามสกุลผู้สูงอายุ *</label>
+          <input type="text" name="patientName" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+          <div class="error-message">กรุณากรอกชื่อ-นามสกุลผู้สูงอายุ</div>
+        </div>
+
+        <div class="datetime-wrapper">
+          <div class="form-group">
+            <label>อายุ *</label>
+            <input type="number" name="patientAge" placeholder="ปี" min="1" max="120" required>
+            <div class="error-message">กรุณากรอกอายุ</div>
+          </div>
+          
+          <div class="form-group">
+            <label>เพศ *</label>
+            <select name="patientGender" required>
+              <option value="">เลือกเพศ</option>
+              <option value="ชาย">ชาย</option>
+              <option value="หญิง">หญิง</option>
+            </select>
+            <div class="error-message">กรุณาเลือกเพศ</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>โรคประจำตัว/ภาวะสุขภาพ</label>
+          <textarea name="patientHealth" placeholder="ระบุโรคประจำตัวหรือภาวะสุขภาพที่ควรทราบ (ถ้ามี)"></textarea>
+        </div>
+      </div>
+
+      <!-- 3. รายละเอียดการนัดหมาย -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-number">3</span>
+          รายละเอียดการนัดหมาย
+        </h3>
+        
+        <div class="form-group">
+          <label>จุดรับ *</label>
+          <input type="text" name="pickupLocation" placeholder="ที่อยู่จุดรับ" required>
+          <div class="error-message">กรุณากรอกจุดรับ</div>
+        </div>
+
+        <div class="form-group">
+          <label>จุดส่ง/ชื่อโรงพยาบาล *</label>
+          <input type="text" name="dropLocation" placeholder="ชื่อโรงพยาบาลหรือจุดส่ง" required>
+          <div class="error-message">กรุณากรอกจุดส่ง</div>
+        </div>
+
+        <div class="form-group">
+          <label>หมายเหตุจุดรับ</label>
+          <textarea name="pickupNote" placeholder="เช่น บ้านอยู่ชั้นสูง ไม่มีลิฟท์ ต้องเดินขึ้นบันได ฯลฯ"></textarea>
+        </div>
+
+        <div class="datetime-wrapper">
+          <div class="datetime-field" data-icon="📅">
+            <label>วันที่นัด *</label>
+            <input type="text" id="appointmentDate" name="appointmentDate" placeholder="เลือกวันที่" required readonly>
+            <div class="error-message">กรุณาเลือกวันที่</div>
+          </div>
+          <div class="datetime-field" data-icon="⏰">
+            <label>เวลานัด *</label>
+            <input type="text" id="appointmentTime" name="appointmentTime" placeholder="เลือกเวลา" required readonly>
+            <div class="error-message">กรุณาเลือกเวลา</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>อัปโหลดใบนัดแพทย์ (ถ้ามี)</label>
+          <div class="file-input-wrapper">
+            <input type="file" id="appointmentFile" name="appointmentFile" accept=".jpg,.jpeg,.png,.pdf">
+            <label for="appointmentFile" class="file-input-label">
+              📎 แตะเพื่อเลือกไฟล์<br>
+              <small>รองรับ JPG, PNG, PDF</small>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">ส่งข้อมูลการจอง</button>
+    </form>
+
+    <div class="success-message" id="successMessage">
+      <div class="success-icon">✅</div>
+      <div class="success-text">จองเรียบร้อยแล้ว!</div>
+      <div>ใช้เบอร์โทรศัพท์ในการตรวจสอบสถานะการจอง</div>
+      <div class="order-id" id="showOrderId"></div>
+      <div style="color: #64748b; font-size: 16px; margin-top: 25px;">
+        💡 กรุณาจดจำเบอร์โทรศัพท์ที่ใช้จองไว้<br>
+        สำหรับการติดตามสถานะการจอง
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    function generateOrderId() {
+      const date = new Date();
+      const yyyymmdd = date.toISOString().slice(0,10).replace(/-/g,"");
+      const random = Math.floor(1000 + Math.random() * 9000);
+      return `LHAN-${yyyymmdd}-${random}`;
+    }
+
+    // Initialize date/time pickers
+    flatpickr("#appointmentDate", {
+      dateFormat: "d/m/Y",
+      minDate: "today",
+      locale: "th",
+      allowInput: false
+    });
+    
+    flatpickr("#appointmentTime", {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true,
+      allowInput: false
+    });
+
+    // File input handling
+    document.getElementById('appointmentFile').addEventListener('change', function(e) {
+      const label = document.querySelector('.file-input-label');
+      const fileName = e.target.files[0]?.name;
+      if (fileName) {
+        label.innerHTML = `📎 ${fileName}<br><small>ไฟล์ถูกเลือกแล้ว</small>`;
+        label.style.borderColor = '#10b981';
+        label.style.background = '#f0fdf4';
+      }
+    });
+
+    // Form validation
+    function validateForm(formData) {
+      const errors = {};
+      const requiredFields = ['customerName', 'customerPhone', 'relation', 'patientName', 'patientAge', 'patientGender', 'pickupLocation', 'dropLocation', 'appointmentDate', 'appointmentTime'];
+      
+      requiredFields.forEach(field => {
+        const value = formData.get(field);
+        if (!value || value.trim() === '') {
+          errors[field] = true;
+        }
+      });
+
+      // Phone validation
+      const phone = formData.get('customerPhone');
+      if (phone && !/^[0-9]{9,10}$/.test(phone.replace(/[^0-9]/g, ''))) {
+        errors.customerPhone = true;
+      }
+
+      return errors;
+    }
+
+    function showErrors(errors) {
+      // Clear previous errors
+      document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+      document.querySelectorAll('.error-message.show').forEach(el => el.classList.remove('show'));
+
+      // Show new errors
+      Object.keys(errors).forEach(field => {
+        const input = document.querySelector(`[name="${field}"]`);
+        const errorMsg = input?.parentElement?.querySelector('.error-message');
+        if (input) {
+          input.classList.add('error');
+          if (errorMsg) errorMsg.classList.add('show');
+        }
+      });
+
+      // Scroll to first error
+      const firstError = document.querySelector('.error');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // Form submission
+    document.getElementById("bookingForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const errors = validateForm(formData);
+      
+      if (Object.keys(errors).length > 0) {
+        showErrors(errors);
+        return;
+      }
+
+      const orderId = generateOrderId();
+      document.getElementById("orderId").value = orderId;
+      formData.set('orderId', orderId);
+
+      const submitBtn = document.querySelector('.submit-btn');
+      const originalText = submitBtn.textContent;
+      
+      // Show loading state
+      submitBtn.textContent = 'กำลังส่งข้อมูล...';
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
+
+      // แทนที่จะส่งไป Google Apps Script ให้แสดงหน้า success ทันที
+      // สำหรับ demo - ในการใช้งานจริงให้เปลี่ยน URL ด้านล่าง
+      setTimeout(() => {
+        document.getElementById("bookingForm").style.display = "none";
+        document.getElementById("showOrderId").textContent = formData.get('customerPhone');
+        document.getElementById("successMessage").classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 2000);
+
+      // เมื่อมี Google Apps Script URL แล้ว ให้ใช้โค้ดด้านล่างแทน
+      /*
+      fetch("YOUR_GOOGLE_APPS_SCRIPT_URL_HERE", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("bookingForm").style.display = "none";
+        document.getElementById("showOrderId").textContent = formData.get('customerPhone');
+        document.getElementById("successMessage").classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+        
+        // Reset button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+      });
+      */
+    });
+
+    // Auto-hide errors on input
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+      input.addEventListener('input', function() {
+        this.classList.remove('error');
+        const errorMsg = this.parentElement?.querySelector('.error-message');
+        if (errorMsg) errorMsg.classList.remove('show');
+      });
+    });
+
+    // Improve mobile experience
+    document.addEventListener('DOMContentLoaded', function() {
+      // Force prevent zoom on ALL mobile devices
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+      }
+      
+      // Additional zoom prevention for iOS Safari
+      document.addEventListener('touchstart', function(e) {
+        if (e.touches && e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      
+      // Prevent double-tap zoom
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function(e) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+          e.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+      
+      // Improve keyboard handling
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+          // Ensure element is visible when keyboard appears
+          setTimeout(() => {
+            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300);
+        });
+        
+        // Additional iOS zoom prevention
+        input.addEventListener('touchstart', function(e) {
+          // Set font-size to 16px temporarily to prevent zoom
+          this.style.fontSize = '20px';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
