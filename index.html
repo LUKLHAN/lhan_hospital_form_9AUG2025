@@ -752,78 +752,85 @@
       }
     }
 
-    // Form submission - ปรับให้ส่งไป Google Apps Script
-    document.getElementById("actualBookingForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      
-      const formData = new FormData(this);
-      const errors = validateForm(formData);
-      
-      if (Object.keys(errors).length > 0) {
-        showErrors(errors);
-        return;
-      }
+    / Form submission - เวอร์ชันแก้ไขสำหรับ Netlify
+document.getElementById("actualBookingForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const errors = validateForm(formData);
+  
+  if (Object.keys(errors).length > 0) {
+    showErrors(errors);
+    return;
+  }
 
-      const orderId = generateOrderId();
-      document.getElementById("orderId").value = orderId;
-      formData.set('orderId', orderId);
+  const orderId = generateOrderId();
+  document.getElementById("orderId").value = orderId;
+  formData.set('orderId', orderId);
 
-      const submitBtn = document.querySelector('.submit-btn');
-      const originalText = submitBtn.textContent;
+  const submitBtn = document.querySelector('.submit-btn');
+  const originalText = submitBtn.textContent;
+  
+  // Show loading state
+  submitBtn.textContent = 'กำลังส่งข้อมูล...';
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+
+  // แปลง FormData เป็น URLSearchParams
+  const params = new URLSearchParams();
+  for (const [key, value] of formData.entries()) {
+    if (key !== 'appointmentFile') { // ข้ามไฟล์ในตอนนี้
+      params.append(key, value);
+    }
+  }
+
+  // ⚠️ ใส่ Web App URL ที่ได้จาก Google Apps Script ตรงนี้
+  const gasUrl = "https://script.google.com/macros/s/AKfycbwRar4renGtudEFjgCJTv6GIpugTvZe52wZz5nJDLOYshmkKnCtmJMK5bBbwOHC79NZCw/exec";
+  
+  // ส่งข้อมูลไป Google Apps Script
+  fetch(gasUrl, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params.toString(),
+    redirect: 'follow'
+  })
+  .then(response => {
+    // ตรวจสอบว่า response สำเร็จไหม
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Success:', data);
+    
+    if (data.status === 'success') {
+      // แสดงหน้า success
+      document.getElementById("bookingForm").style.display = "none";
+      document.getElementById("showOrderId").textContent = `รหัสการจอง: ${orderId}`;
+      document.getElementById("successMessage").classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       
-      // Show loading state
-      submitBtn.textContent = 'กำลังส่งข้อมูล...';
-      submitBtn.disabled = true;
-      submitBtn.classList.add('loading');
-
-      // แปลง FormData เป็น URLSearchParams สำหรับส่งไป Google Apps Script
-      const params = new URLSearchParams();
-      for (const [key, value] of formData.entries()) {
-        params.append(key, value);
-      }
-
-      // ส่งข้อมูลไป Google Apps Script
-      // ⚠️ เปลี่ยน URL นี้เป็น Web App URL ของ Google Apps Script ที่คุณได้รับ
-      const gasUrl = "https://script.google.com/macros/s/AKfycbxrpAwek1vUmHUknbE3DRcJvieRh1VcmUQ3Ls-atdtPNQGOkZMqz17SDW6a527op7TC/exec";
-      
-      fetch(gasUrl, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString()
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          // แสดงหน้า success
-          document.getElementById("bookingForm").style.display = "none";
-          document.getElementById("showOrderId").textContent = `เบอร์โทร: ${formData.get('customerPhone')}`;
-          document.getElementById("successMessage").classList.add('show');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          throw new Error(data.message || 'เกิดข้อผิดพลาด');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        
-        // ถ้า Google Apps Script ยังไม่พร้อม ให้แสดง success เพื่อทดสอบ UI
-        // ลบบรรทัดนี้เมื่อ Google Apps Script พร้อมใช้งานแล้ว
-        document.getElementById("bookingForm").style.display = "none";
-        document.getElementById("showOrderId").textContent = `เบอร์โทร: ${formData.get('customerPhone')}`;
-        document.getElementById("successMessage").classList.add('show');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        // Uncomment บรรทัดด้านล่างเมื่อต้องการแสดง error จริง
-        // alert("เกิดข้อผิดพลาด: " + error.message + "\nกรุณาลองใหม่อีกครั้ง");
-        
-        // Reset button
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('loading');
-      });
-    });
+      // Reset form
+      document.getElementById("actualBookingForm").reset();
+    } else {
+      throw new Error(data.message || 'เกิดข้อผิดพลาดจากเซิร์ฟเวอร์');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    
+    // แสดงข้อผิดพลาดให้ผู้ใช้เห็น
+    alert(`เกิดข้อผิดพลาด: ${error.message}\n\nกรุณาลองใหม่อีกครั้ง หรือติดต่อเจ้าหน้าที่`);
+    
+    // Reset button state
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('loading');
+  });
+});
 
     // Auto-hide errors on input
     document.querySelectorAll('input, select, textarea').forEach(input => {
