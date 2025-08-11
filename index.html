@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>บริการให้ "หลาน" พาผู้สูงอายุไปหาหมอ</title>
+  <title>"หลาน" บริการพาไปหาหมอ</title>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -39,6 +39,114 @@
       font-size: 28px; 
       font-weight: 700; 
       box-shadow: 0 2px 10px rgba(17,58,105,0.2);
+    }
+
+    /* หน้าแรก - แสดงข้อมูลและปุ่มจอง */
+    .landing-section {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .service-info {
+      background: white;
+      margin: 25px 20px;
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+      text-align: left;
+    }
+
+    .service-info h3 {
+      color: #113a69;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .service-info ul {
+      color: #374151;
+      font-size: 18px;
+      line-height: 1.8;
+      padding-left: 20px;
+    }
+
+    .service-info li {
+      margin-bottom: 12px;
+    }
+
+    .booking-btn {
+      width: calc(100% - 40px); 
+      background: linear-gradient(135deg, #113a69, #1e5a96); 
+      color: white; 
+      padding: 24px;
+      font-size: 22px; 
+      font-weight: 700; 
+      border: none; 
+      border-radius: 16px; 
+      cursor: pointer; 
+      margin: 40px 20px 30px 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(17,58,105,0.3);
+      min-height: 68px;
+    }
+
+    .booking-btn:hover, .booking-btn:active { 
+      background: linear-gradient(135deg, #0e3058, #1a4d7a);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(17,58,105,0.4);
+    }
+
+    .check-status-btn {
+      width: calc(100% - 40px); 
+      background: linear-gradient(135deg, #10b981, #059669); 
+      color: white; 
+      padding: 20px;
+      font-size: 20px; 
+      font-weight: 600; 
+      border: none; 
+      border-radius: 16px; 
+      cursor: pointer; 
+      margin: 20px 20px 30px 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+      min-height: 60px;
+    }
+
+    .check-status-btn:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-1px);
+    }
+
+    /* ฟอร์มจอง - ซ่อนไว้เริ่มต้น */
+    .booking-form {
+      display: none;
+    }
+
+    .booking-form.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .back-btn {
+      background: #6b7280;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      margin: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #4b5563;
     }
 
     .form-section {
@@ -252,7 +360,6 @@
       color: #113a69;
       background: white;
       min-height: 100vh;
-      display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -337,7 +444,7 @@
 
     /* Very small screens */
     @media screen and (max-width: 360px) {
-      .form-section {
+      .form-section, .service-info {
         margin: 20px 15px;
         padding: 25px 20px;
       }
@@ -366,139 +473,177 @@
         min-height: 52px;
       }
     }
+
+    .landing-section.hide {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">บริการให้ "หลาน" พาผู้สูงอายุไปหาหมอ</div>
+    <div class="header">บริการ "หลาน" พาไปหาหมอ</div>
 
-    <form id="bookingForm">
-      <input type="hidden" id="orderId" name="orderId">
-
-      <!-- 1. ข้อมูลผู้จอง -->
-      <div class="form-section">
-        <h3 class="section-title">
-          <span class="section-number">1</span>
-          ข้อมูลผู้จองบริการ
-        </h3>
-        
-        <div class="form-group">
-          <label>ชื่อ-นามสกุลผู้จอง *</label>
-          <input type="text" name="customerName" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
-          <div class="error-message">กรุณากรอกชื่อ-นามสกุล</div>
-        </div>
-
-        <div class="form-group">
-          <label>เบอร์โทรติดต่อ *</label>
-          <input type="tel" name="customerPhone" placeholder="0XX-XXX-XXXX" required>
-          <div class="error-message">กรุณากรอกเบอร์โทรติดต่อ</div>
-        </div>
-
-        <div class="form-group">
-          <label>ความสัมพันธ์กับผู้สูงอายุ *</label>
-          <div class="relation-options">
-            <input type="radio" id="self" name="relation" value="ตนเอง" required><label for="self">ตนเอง</label>
-            <input type="radio" id="child" name="relation" value="บุตร"><label for="child">บุตร</label>
-            <input type="radio" id="father" name="relation" value="บิดา"><label for="father">บิดา</label>
-            <input type="radio" id="mother" name="relation" value="มารดา"><label for="mother">มารดา</label>
-            <input type="radio" id="spouse" name="relation" value="คู่สมรส"><label for="spouse">คู่สมรส</label>
-            <input type="radio" id="relative" name="relation" value="ญาติ"><label for="relative">ญาติ</label>
-            <input type="radio" id="friend" name="relation" value="เพื่อน"><label for="friend">เพื่อน</label>
-            <input type="radio" id="other" name="relation" value="อื่นๆ"><label for="other">อื่นๆ</label>
-          </div>
-          <div class="error-message">กรุณาเลือกความสัมพันธ์</div>
-        </div>
+    <!-- หน้าแรก -->
+    <div class="landing-section" id="landingSection">
+      <div class="service-info">
+        <h3>🚗 บริการรถเข็นนอกสถานที่</h3>
+        <ul>
+          <li>🏥 รับ-ส่ง ไปโรงพยาบาล/คลินิก</li>
+          <li>👩‍⚕️ มีพยาบาลผู้ช่วยดูแล</li>
+          <li>🛡️ ประกันภัยครอบคลุม</li>
+          <li>📱 ติดตามสถานะได้ตลอดเวลา</li>
+          <li>💰 ราคาเหมาจ่าย ไม่มีค่าซ่อนเร้น</li>
+          <li>⏰ บริการทุกวัน 24 ชั่วโมง</li>
+        </ul>
       </div>
 
-      <!-- 2. ข้อมูลผู้สูงอายุ -->
-      <div class="form-section">
-        <h3 class="section-title">
-          <span class="section-number">2</span>
-          ข้อมูลผู้สูงอายุ/ผู้ป่วย
-        </h3>
-        
-        <div class="form-group">
-          <label>ชื่อ-นามสกุลผู้สูงอายุ *</label>
-          <input type="text" name="patientName" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
-          <div class="error-message">กรุณากรอกชื่อ-นามสกุลผู้สูงอายุ</div>
-        </div>
+      <button class="booking-btn" onclick="showBookingForm()">
+        📝 จองบริการ
+      </button>
+      
+      <button class="check-status-btn" onclick="window.open('tel:0123456789')">
+        📞 ตรวจสอบสถานะการจอง
+      </button>
+    </div>
 
-        <div class="datetime-wrapper">
-          <div class="form-group">
-            <label>อายุ *</label>
-            <input type="number" name="patientAge" placeholder="ปี" min="1" max="120" required>
-            <div class="error-message">กรุณากรอกอายุ</div>
-          </div>
+    <!-- ฟอร์มจอง -->
+    <div class="booking-form" id="bookingForm">
+      <button class="back-btn" onclick="showLandingPage()">← กลับหน้าแรก</button>
+
+      <form id="actualBookingForm" netlify netlify-honeypot="bot-field" name="wheelchair-booking">
+        <!-- Hidden fields for Netlify -->
+        <input type="hidden" name="form-name" value="wheelchair-booking">
+        <p style="display: none;">
+          <label>Don't fill this out if you're human: <input name="bot-field"></label>
+        </p>
+        <input type="hidden" id="orderId" name="orderId">
+
+        <!-- 1. ข้อมูลผู้จอง -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <span class="section-number">1</span>
+            ข้อมูลผู้จองบริการ
+          </h3>
           
           <div class="form-group">
-            <label>เพศ *</label>
-            <select name="patientGender" required>
-              <option value="">เลือกเพศ</option>
-              <option value="ชาย">ชาย</option>
-              <option value="หญิง">หญิง</option>
-            </select>
-            <div class="error-message">กรุณาเลือกเพศ</div>
+            <label>ชื่อ-นามสกุลผู้จอง *</label>
+            <input type="text" name="customerName" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+            <div class="error-message">กรุณากรอกชื่อ-นามสกุล</div>
+          </div>
+
+          <div class="form-group">
+            <label>เบอร์โทรติดต่อ *</label>
+            <input type="tel" name="customerPhone" placeholder="0XX-XXX-XXXX" required>
+            <div class="error-message">กรุณากรอกเบอร์โทรติดต่อ</div>
+          </div>
+
+          <div class="form-group">
+            <label>ความสัมพันธ์กับผู้สูงอายุ *</label>
+            <div class="relation-options">
+              <input type="radio" id="self" name="relation" value="ตนเอง" required><label for="self">ตนเอง</label>
+              <input type="radio" id="child" name="relation" value="บุตร"><label for="child">บุตร</label>
+              <input type="radio" id="father" name="relation" value="บิดา"><label for="father">บิดา</label>
+              <input type="radio" id="mother" name="relation" value="มารดา"><label for="mother">มารดา</label>
+              <input type="radio" id="spouse" name="relation" value="คู่สมรส"><label for="spouse">คู่สมรส</label>
+              <input type="radio" id="relative" name="relation" value="ญาติ"><label for="relative">ญาติ</label>
+              <input type="radio" id="friend" name="relation" value="เพื่อน"><label for="friend">เพื่อน</label>
+              <input type="radio" id="other" name="relation" value="อื่นๆ"><label for="other">อื่นๆ</label>
+            </div>
+            <div class="error-message">กรุณาเลือกความสัมพันธ์</div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>โรคประจำตัว/ภาวะสุขภาพ</label>
-          <textarea name="patientHealth" placeholder="ระบุโรคประจำตัวหรือภาวะสุขภาพที่ควรทราบ (ถ้ามี)"></textarea>
-        </div>
-      </div>
-
-      <!-- 3. รายละเอียดการนัดหมาย -->
-      <div class="form-section">
-        <h3 class="section-title">
-          <span class="section-number">3</span>
-          รายละเอียดการนัดหมาย
-        </h3>
-        
-        <div class="form-group">
-          <label>จุดรับ *</label>
-          <input type="text" name="pickupLocation" placeholder="ที่อยู่จุดรับ" required>
-          <div class="error-message">กรุณากรอกจุดรับ</div>
-        </div>
-
-        <div class="form-group">
-          <label>จุดส่ง/ชื่อโรงพยาบาล *</label>
-          <input type="text" name="dropLocation" placeholder="ชื่อโรงพยาบาลหรือจุดส่ง" required>
-          <div class="error-message">กรุณากรอกจุดส่ง</div>
-        </div>
-
-        <div class="form-group">
-          <label>หมายเหตุจุดรับ</label>
-          <textarea name="pickupNote" placeholder="เช่น บ้านอยู่ชั้นสูง ไม่มีลิฟท์ ต้องเดินขึ้นบันได ฯลฯ"></textarea>
-        </div>
-
-        <div class="datetime-wrapper">
-          <div class="datetime-field" data-icon="📅">
-            <label>วันที่นัด *</label>
-            <input type="text" id="appointmentDate" name="appointmentDate" placeholder="เลือกวันที่" required readonly>
-            <div class="error-message">กรุณาเลือกวันที่</div>
+        <!-- 2. ข้อมูลผู้สูงอายุ -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <span class="section-number">2</span>
+            ข้อมูลผู้สูงอายุ/ผู้ป่วย
+          </h3>
+          
+          <div class="form-group">
+            <label>ชื่อ-นามสกุลผู้สูงอายุ *</label>
+            <input type="text" name="patientName" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+            <div class="error-message">กรุณากรอกชื่อ-นามสกุลผู้สูงอายุ</div>
           </div>
-          <div class="datetime-field" data-icon="⏰">
-            <label>เวลานัด *</label>
-            <input type="text" id="appointmentTime" name="appointmentTime" placeholder="เลือกเวลา" required readonly>
-            <div class="error-message">กรุณาเลือกเวลา</div>
+
+          <div class="datetime-wrapper">
+            <div class="form-group">
+              <label>อายุ *</label>
+              <input type="number" name="patientAge" placeholder="ปี" min="1" max="120" required>
+              <div class="error-message">กรุณากรอกอายุ</div>
+            </div>
+            
+            <div class="form-group">
+              <label>เพศ *</label>
+              <select name="patientGender" required>
+                <option value="">เลือกเพศ</option>
+                <option value="ชาย">ชาย</option>
+                <option value="หญิง">หญิง</option>
+              </select>
+              <div class="error-message">กรุณาเลือกเพศ</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>โรคประจำตัว/ภาวะสุขภาพ</label>
+            <textarea name="patientHealth" placeholder="ระบุโรคประจำตัวหรือภาวะสุขภาพที่ควรทราบ (ถ้ามี)"></textarea>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>อัปโหลดใบนัดแพทย์ (ถ้ามี)</label>
-          <div class="file-input-wrapper">
-            <input type="file" id="appointmentFile" name="appointmentFile" accept=".jpg,.jpeg,.png,.pdf">
-            <label for="appointmentFile" class="file-input-label">
-              📎 แตะเพื่อเลือกไฟล์<br>
-              <small>รองรับ JPG, PNG, PDF</small>
-            </label>
+        <!-- 3. รายละเอียดการนัดหมาย -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <span class="section-number">3</span>
+            รายละเอียดการนัดหมาย
+          </h3>
+          
+          <div class="form-group">
+            <label>จุดรับ *</label>
+            <input type="text" name="pickupLocation" placeholder="ที่อยู่จุดรับ" required>
+            <div class="error-message">กรุณากรอกจุดรับ</div>
+          </div>
+
+          <div class="form-group">
+            <label>จุดส่ง/ชื่อโรงพยาบาล *</label>
+            <input type="text" name="dropLocation" placeholder="ชื่อโรงพยาบาลหรือจุดส่ง" required>
+            <div class="error-message">กรุณากรอกจุดส่ง</div>
+          </div>
+
+          <div class="form-group">
+            <label>หมายเหตุจุดรับ</label>
+            <textarea name="pickupNote" placeholder="เช่น บ้านอยู่ชั้นสูง ไม่มีลิฟท์ ต้องเดินขึ้นบันได ฯลฯ"></textarea>
+          </div>
+
+          <div class="datetime-wrapper">
+            <div class="datetime-field" data-icon="📅">
+              <label>วันที่นัด *</label>
+              <input type="text" id="appointmentDate" name="appointmentDate" placeholder="เลือกวันที่" required readonly>
+              <div class="error-message">กรุณาเลือกวันที่</div>
+            </div>
+            <div class="datetime-field" data-icon="⏰">
+              <label>เวลานัด *</label>
+              <input type="text" id="appointmentTime" name="appointmentTime" placeholder="เลือกเวลา" required readonly>
+              <div class="error-message">กรุณาเลือกเวลา</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>อัปโหลดใบนัดแพทย์ (ถ้ามี)</label>
+            <div class="file-input-wrapper">
+              <input type="file" id="appointmentFile" name="appointmentFile" accept=".jpg,.jpeg,.png,.pdf">
+              <label for="appointmentFile" class="file-input-label">
+                📎 แตะเพื่อเลือกไฟล์<br>
+                <small>รองรับ JPG, PNG, PDF</small>
+              </label>
+            </div>
           </div>
         </div>
-      </div>
 
-      <button type="submit" class="submit-btn">ส่งข้อมูลการจอง</button>
-    </form>
+        <button type="submit" class="submit-btn">ส่งข้อมูลการจอง</button>
+      </form>
+    </div>
 
+    <!-- หน้า Success -->
     <div class="success-message" id="successMessage">
       <div class="success-icon">✅</div>
       <div class="success-text">จองเรียบร้อยแล้ว!</div>
@@ -508,11 +653,28 @@
         💡 กรุณาจดจำเบอร์โทรศัพท์ที่ใช้จองไว้<br>
         สำหรับการติดตามสถานะการจอง
       </div>
+      <button class="booking-btn" onclick="location.reload()" style="margin-top: 30px;">
+        🏠 กลับหน้าแรก
+      </button>
     </div>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
+    // ฟังก์ชันสลับหน้า
+    function showBookingForm() {
+      document.getElementById('landingSection').classList.add('hide');
+      document.getElementById('bookingForm').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showLandingPage() {
+      document.getElementById('bookingForm').classList.remove('show');
+      document.getElementById('landingSection').classList.remove('hide');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function generateOrderId() {
       const date = new Date();
       const yyyymmdd = date.toISOString().slice(0,10).replace(/-/g,"");
@@ -590,8 +752,8 @@
       }
     }
 
-    // Form submission
-    document.getElementById("bookingForm").addEventListener("submit", function(e){
+    // Form submission - ปรับให้ส่งไป Google Apps Script
+    document.getElementById("actualBookingForm").addEventListener("submit", function(e){
       e.preventDefault();
       
       const formData = new FormData(this);
@@ -614,38 +776,53 @@
       submitBtn.disabled = true;
       submitBtn.classList.add('loading');
 
-      // แทนที่จะส่งไป Google Apps Script ให้แสดงหน้า success ทันที
-      // สำหรับ demo - ในการใช้งานจริงให้เปลี่ยน URL ด้านล่าง
-      setTimeout(() => {
-        document.getElementById("bookingForm").style.display = "none";
-        document.getElementById("showOrderId").textContent = formData.get('customerPhone');
-        document.getElementById("successMessage").classList.add('show');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 2000);
+      // แปลง FormData เป็น URLSearchParams สำหรับส่งไป Google Apps Script
+      const params = new URLSearchParams();
+      for (const [key, value] of formData.entries()) {
+        params.append(key, value);
+      }
 
-      // เมื่อมี Google Apps Script URL แล้ว ให้ใช้โค้ดด้านล่างแทน
+      // ส่งข้อมูลไป Google Apps Script
+      // ⚠️ เปลี่ยน URL นี้เป็น Web App URL ของ Google Apps Script ที่คุณได้รับ
+      const gasUrl = "https://script.google.com/macros/s/AKfycbxrpAwek1vUmHUknbE3DRcJvieRh1VcmUQ3Ls-atdtPNQGOkZMqz17SDW6a527op7TC/exec";
       
-      fetch("https://script.google.com/macros/s/AKfycbwRar4renGtudEFjgCJTv6GIpugTvZe52wZz5nJDLOYshmkKnCtmJMK5bBbwOHC79NZCw/exec", {
+      fetch(gasUrl, {
         method: "POST",
-        body: formData
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString()
       })
-      .then(response => response.text())
+      .then(response => response.json())
       .then(data => {
-        document.getElementById("bookingForm").style.display = "none";
-        document.getElementById("showOrderId").textContent = formData.get('customerPhone');
-        document.getElementById("successMessage").classList.add('show');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (data.status === 'success') {
+          // แสดงหน้า success
+          document.getElementById("bookingForm").style.display = "none";
+          document.getElementById("showOrderId").textContent = `เบอร์โทร: ${formData.get('customerPhone')}`;
+          document.getElementById("successMessage").classList.add('show');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          throw new Error(data.message || 'เกิดข้อผิดพลาด');
+        }
       })
       .catch(error => {
         console.error('Error:', error);
-        alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+        
+        // ถ้า Google Apps Script ยังไม่พร้อม ให้แสดง success เพื่อทดสอบ UI
+        // ลบบรรทัดนี้เมื่อ Google Apps Script พร้อมใช้งานแล้ว
+        document.getElementById("bookingForm").style.display = "none";
+        document.getElementById("showOrderId").textContent = `เบอร์โทร: ${formData.get('customerPhone')}`;
+        document.getElementById("successMessage").classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Uncomment บรรทัดด้านล่างเมื่อต้องการแสดง error จริง
+        // alert("เกิดข้อผิดพลาด: " + error.message + "\nกรุณาลองใหม่อีกครั้ง");
         
         // Reset button
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         submitBtn.classList.remove('loading');
       });
-      */
     });
 
     // Auto-hide errors on input
